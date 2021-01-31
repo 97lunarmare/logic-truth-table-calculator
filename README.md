@@ -2,7 +2,7 @@
 
 A simple site that allows the user to enter some propositional logic and displays the respective truth table.
 
-[View the demo.](https://truthtable.matthewlang.tech)
+[View the demo.](https://97lunarmare.github.io/logic-truth-table-calculator/)
 
 ## Example
 Given the input `p then q`, the following truth table will be generated.
