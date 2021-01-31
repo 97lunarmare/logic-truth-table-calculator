@@ -67,7 +67,6 @@ function onInputChange( value ) {
 // Changes JavaScript code literal into propositional syntax, e.g
 // p || q -> p V q
 function prettyPrint(string) {
-    console.log(string);
     return string
         .replaceAll(regularExpressions.and, '&and;')
         .replaceAll(regularExpressions.or, '&or;')
