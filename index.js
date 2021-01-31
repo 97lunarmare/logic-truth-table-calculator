@@ -58,8 +58,10 @@ function onInputChange( value ) {
             rowElem.insertCell(-1).innerHTML = eval(rowCode) ? '<strong>T</strong>' : 'F';
             errorElem.style.display = 'none';
         } catch (err) {
+            console.log({err});
             errorElem.style.display = 'block';
-            errorElem.innerText = 'Malformed propositional logic.';
+            errorElem.innerHTML = `Malformed propositional logic;
+                <pre class="mt-2">(${code}) => (${rowCode})<br>${err.message}</pre>Try using parentheses to specify order of precedence.`;
         }
     }
 }
