@@ -11,7 +11,7 @@ const errorElem = document.getElementById('logic-error');
 const regularExpressions = {
     'and': /(?<= |^)(and|[&]|\/\\|\^)+(?= |$)/g,    // and = &&
     'or': /(?<= |^)(or|[\|]|\\\/|v|V)+(?= |$)/g,    // or = ||
-    'not': /(?<= |^|\(|\)))(not |not|!|¬)+/g,              // not = !
+    'not': /(?<= |^|\(|\))(not |not|!|¬)+/g,              // not = !
     'then': /(.[^-]+?)(?:then|(?<!<)-+>)(.+)/g,     // p then q = !p || q
     'equals': /(?<= |^)(<-+>)+(?= |$)/g,            // <-> = ==
     'xor': /(?<= |^)(\(\+\)|xor)+(?= |$)/g,         // (+) = ^ (bit-wise XOR)
