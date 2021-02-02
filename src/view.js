@@ -107,4 +107,31 @@ function showTruthTable(logic) {
     logicInputElem.dispatchEvent(new Event('input'));
 }
 
+// Downloads current truth table as a .csv file for the user
+function downloadCSV() {
+    let csv = currentTruthTable.map(row => row.join(',')).join('\n');
+    downloadFile(csv, 'truth-table.csv', 'text/csv');
+}
+
+// Downloads current truth table as a .json file
+function downloadJSON() {
+    downloadFile(JSON.stringify(currentTruthTable), 'truth-table.json', 'application/json');
+}
+
+/**
+ * Downloads a file to the user :)
+ */
+function downloadFile(data, fileName, type = 'text/plain') {
+    const a = document.createElement('a');
+    a.style.display ='none';
+    document.body.appendChild(a);
+    a.href = window.URL.createObjectURL(new Blob([data], { type }));
+    a.setAttribute('download', fileName);
+    a.click();
+
+    window.URL.revokeObjectURL(a.href);
+    document.body.removeChild(a);
+}
+
 populateCommonLaws();
+showTruthTable('p then q, !p or q');

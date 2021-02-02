@@ -5,6 +5,9 @@ const errorElem = document.getElementById('logic-error');
 // Performance text element
 const performanceTextElem = document.getElementById('performance-text');
 
+// Stores the current truth table
+let currentTruthTable = null;
+
 /**
  * Regular expressions used throughout the application,
  * mostly for finding and replacing propositional logic operands
@@ -54,6 +57,7 @@ function calculateTruthTable(logic) {
                 err.rowCode = rowCode;
                 throw err;
             }
+
         });
     }
 
@@ -68,8 +72,6 @@ function onInputChange( value ) {
         errorElem.style.display = 'none';
 
         let truthTable = calculateTruthTable(value);
-
-        console.log(truthTable);
 
         // Generate table headers
         tableElem.querySelector('thead > tr').innerHTML = 
@@ -95,7 +97,7 @@ function onInputChange( value ) {
         }
     
         performanceTextElem.innerText = 'Truth table generated in ' + (performance.now() - performanceStart).toFixed(2) + ' ms.'
-    
+        currentTruthTable = truthTable;
     } catch (err) {
         errorElem.style.display = 'block';
         errorElem.innerHTML = `Malformed propositional logic;
