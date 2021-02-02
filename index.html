@@ -6,10 +6,28 @@
     <title>Propositional Logic Calculator</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+
+    <style>
+        html {
+            position: relative;
+            min-height: 100%;
+          }
+          body {
+            margin-bottom: 60px; /* Margin bottom by footer height */
+          }
+          .footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 60px; /* Set the fixed height of the footer here */
+            line-height: 60px; /* Vertically center the text there */
+            background-color: #f5f5f5;
+          }          
+    </style>
 </head>
 <body>
-    
-    <div class="container mt-5">
+
+    <main role="main" class="container mt-5">
         <div class="row">
 
             <div class="col-md-6 mb-5">
@@ -64,35 +82,30 @@
                     </tbody>
     
                 </table>
+
+                <p><small id="performance-text"></small></p>
             </div>
         </div>
 
         <div class="alert alert-info mt-2" role="alert">
             You can use <code>and</code>, <code>or</code>, <code>not</code>, <code>then</code>, <code>equals</code>,
-            <code>xor</code> as well as symbols like <code>-></code> for <code>then</code> etc. In certain circumstances 
-            the calculator requires explicit brackets to infer order of precedence.
+            <code>xor</code> as well as symbols like <code>-></code> for <code>then</code> etc. You can also use 
+            <code>T</code> or <code>true</code> to specify true and false values.
         </div>
 
         <div class="row mt-5">
             <h4>Common laws</h4>
             <hr class="mt-2">
 
-            <div class="col-xs-12 d-flex mt-4">
-                <div class="card" style="width: 18rem;">
-                    <div class="card-body">
-                        <h5 class="card-title">Identity Laws</h5>
-                        
-                        <div class="my-2">
-                            <code>p &and; T = p</code>
-                        </div>
-
-                        <p class="card-text"><code>p</code> and <code>true</code> will always equate to be <code>p</code>.</p>
-                        <a href="#" class="card-link">View truth table</a>
-                    </div>
-                </div>
-            </div>
+            <div class="col-xs-12 d-flex mt-4 flex-wrap" id="commonLawsBank"></div>
         </div>
-    </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <span class="text-muted">&copy; 2021 - Developed and maintained by 97lunarmare. <a href="https://github.com/97lunarmare/logic-truth-table-calculator">Visit the GitHub page.</a></span>
+        </div>
+    </footer>
 
     <script src="./src/logic.js"></script>
     <script src="./src/view.js"></script>

@@ -2,6 +2,8 @@
 const tableElem = document.getElementById('logic-table');
 // Element which stores UI error messages
 const errorElem = document.getElementById('logic-error');
+// Performance text element
+const performanceTextElem = document.getElementById('performance-text');
 
 /**
  * Regular expressions used throughout the application,
@@ -9,21 +11,25 @@ const errorElem = document.getElementById('logic-error');
  * such as 'and', 'then', '->' etc with JavaScript operands
  */
 const regularExpressions = {
+    'true': /(?<= |^|\(|\))(T|true)(?= |$|\(|\))+/g,
+    'false': /(?<= |^|\(|\))(F|false)(?= |$|\(|\))+/g,
     'and': /(?<= |^)(and|[&]|\/\\|\^)+(?= |$)/g,    // and = &&
-    'or': /(?<= |^)(or|[\|]|\\\/|v|V)+(?= |$)/g,    // or = ||
+    'or': /(?<= |^)(or|[\|]|\\\/)+(?= |$)/g,    // or = ||
     'not': /(?<= |^|\(|\))(not |not|!|¬)+/g,        // not = !
     'thenWrap': /(.[^-]+?)(?:then|(?<!<)-+>)(.+)/g,     // p then q = !p || q
     'then': /(then|(?<!<)-+>)/g,                    // then, but without capturing left or right side
-    'equals': /(?<= |^)(<-+>)+(?= |$)/g,            // <-> = ==
+    'equals': /(?<= |^)(<-+>|=)+(?= |$)/g,            // <-> = ==
     'xor': /(?<= |^)(\(\+\)|xor)+(?= |$)/g,         // (+) = ^ (bit-wise XOR)
-    'premises': /[^\W\s]+/g,                        // Identifies any words, i.e our premises/variables, p, q, ...n
+    'premises': /[^\W\s01]+/g,                        // Identifies any words, i.e our premises/variables, p, q, ...n
 }
 
 // Gets triggered when the main HTML input element is changed
 function onInputChange( value ) {
+    let performanceStart = performance.now();
 
     // Run our input through the parser, which gives us a JavaScript code literal which we can eval()
     let code = parse(value);
+    console.log(code);
 
     // e.g ['p', 'q', 'r']
     // Transforming to Set and back to Array weeds out duplicate values
@@ -65,6 +71,8 @@ function onInputChange( value ) {
                 <pre class="mt-2">(${code}) => (${rowCode})<br>${err.message}</pre>Try using parentheses to specify order of precedence.`;
         }
     }
+
+    performanceTextElem.innerText = 'Truth table generated in ' + (performance.now() - performanceStart).toFixed(2) + ' ms.'
 }
 
 // Changes JavaScript code literal into propositional syntax, e.g
@@ -113,6 +121,9 @@ function parse(logic) {
         .replaceAll(regularExpressions.equals, '==')
         // Xor
         .replaceAll(regularExpressions.xor, '^')
+        // Replace T/true and F/false values for JavaScript variants
+        .replaceAll(regularExpressions.true, '1')
+        .replaceAll(regularExpressions.false, '0')
 }
 
 /**
