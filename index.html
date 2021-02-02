@@ -41,7 +41,7 @@
                         id="logic-input" 
                         class="form-control" 
                         type="text" 
-                        placeholder="p and q" 
+                        placeholder="p then q, !p or q" 
                         oninput="onInputChange(this.value)">
                 </div>
 
@@ -51,37 +51,40 @@
             <div class="col-md-6">
                 <table class="table table-striped table-bordered" id="logic-table">
                     <thead class="thead-dark">
-                        <tr>
-                            <th scope="col">p</th>
-                            <th scope="col">q</th>
-                            <th scope="col">p &and; q</th>
-                        </tr>
+                       <tr>
+                          <th>p</th>
+                          <th>q</th>
+                          <th>p &rarr; q</th>
+                          <th>&sim;p &or; q</th>
+                       </tr>
                     </thead>
-    
                     <tbody>
-                        <tr>
-                            <td>T</td>
-                            <td>T</td>
-                            <td><strong>T</strong></td>
-                        </tr>
-                        <tr>
-                            <td>T</td>
-                            <td>F</td>
-                            <td>F</td>
-                        </tr>
-                        <tr>
-                            <td>F</td>
-                            <td>T</td>
-                            <td>F</td>
-                        </tr>
-                        <tr>
-                            <td>F</td>
-                            <td>F</td>
-                            <td>F</td>
-                        </tr>
+                       <tr>
+                          <td><strong class="h5"><code class="text-primary">T</code></strong></td>
+                          <td><strong class="h5"><code class="text-primary">T</code></strong></td>
+                          <td><strong class="h5"><code class="text-primary">T</code></strong></td>
+                          <td><strong class="h5"><code class="text-primary">T</code></strong></td>
+                       </tr>
+                       <tr>
+                          <td><strong class="h5"><code class="text-primary">T</code></strong></td>
+                          <td><strong class="h5"><code>F</code></strong></td>
+                          <td><strong class="h5"><code>F</code></strong></td>
+                          <td><strong class="h5"><code>F</code></strong></td>
+                       </tr>
+                       <tr>
+                          <td><strong class="h5"><code>F</code></strong></td>
+                          <td><strong class="h5"><code class="text-primary">T</code></strong></td>
+                          <td><strong class="h5"><code class="text-primary">T</code></strong></td>
+                          <td><strong class="h5"><code class="text-primary">T</code></strong></td>
+                       </tr>
+                       <tr>
+                          <td><strong class="h5"><code>F</code></strong></td>
+                          <td><strong class="h5"><code>F</code></strong></td>
+                          <td><strong class="h5"><code class="text-primary">T</code></strong></td>
+                          <td><strong class="h5"><code class="text-primary">T</code></strong></td>
+                       </tr>
                     </tbody>
-    
-                </table>
+                 </table>
 
                 <p><small id="performance-text"></small></p>
             </div>
@@ -89,8 +92,9 @@
 
         <div class="alert alert-info mt-2" role="alert">
             You can use <code>and</code>, <code>or</code>, <code>not</code>, <code>then</code>, <code>equals</code>,
-            <code>xor</code> as well as symbols like <code>-></code> for <code>then</code> etc. You can also use 
-            <code>T</code> or <code>true</code> to specify true and false values.
+            <code>xor</code> as well as symbols like <code>-></code> for <code>then</code> etc. 
+            Separate pieces of logic using a comma to compare their truth tables, e.g <code>`p then q, !p or q</code>.
+            You can also use <code>T</code> or <code>true</code> to specify true and false values.
         </div>
 
         <div class="row mt-5">

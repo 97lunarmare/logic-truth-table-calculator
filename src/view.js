@@ -92,7 +92,7 @@ function populateCommonLaws() {
                     //    return '<code>' + p1 + '</code>'
                     //}) 
                     ''}</p>
-                    <button class="btn btn-link" onclick="showTruthTable('${law.logic[0][0]}')">View truth table</button>
+                    <button class="btn btn-link" onclick="showTruthTable('${law.logic[0].join(', ')}')">View truth table</button>
                 </div>
             </div>
         `;
@@ -101,6 +101,7 @@ function populateCommonLaws() {
 
 // Overrides the input field with specified logic to show the truth table
 function showTruthTable(logic) {
+    console.log(logic);
     let logicInputElem = document.getElementById('logic-input');
     logicInputElem.value = logic;
     logicInputElem.dispatchEvent(new Event('input'));

@@ -23,56 +23,84 @@ const regularExpressions = {
     'premises': /[^\W\s01]+/g,                        // Identifies any words, i.e our premises/variables, p, q, ...n
 }
 
-// Gets triggered when the main HTML input element is changed
-function onInputChange( value ) {
-    let performanceStart = performance.now();
+function calculateTruthTable(logic) {
 
-    // Run our input through the parser, which gives us a JavaScript code literal which we can eval()
-    let code = parse(value);
-    console.log(code);
+    // Seperate logic by commas, and generate a truth table column for each
+    let logics = logic.split(',');
+    let codes = logics.map(logic => parse(logic));
 
-    // e.g ['p', 'q', 'r']
     // Transforming to Set and back to Array weeds out duplicate values
-    let premiseOrder = [ ...new Set(code.match(regularExpressions.premises)) ]; 
+    let premiseOrder = [ ...new Set(codes.join(',').match(regularExpressions.premises)) ];
 
     // Cartesian product, e.g every possible combination of p, q, ...n
     let premiseCartesian = cartesianProduct(premiseOrder.map(() => [true, false]));
 
-    // Generate table headers
-    tableElem.querySelector('thead > tr').innerHTML = premiseOrder.map(p => `<th>${p}</th>`).join('') + `<th>${prettyPrint(value)}</th>`;
-
-    // Clear tbody
-    tableElem.querySelector('tbody').innerHTML = null;
-
     // Loop over each possible combination
     for( let i = 0; i < premiseCartesian.length; i++ ) {
         // A copy of the code literal which we will modify to represent this row's truth value
-        let rowCode = code; 
+        let rowCodes = codes;
 
-        // Generate tr elem for this row
-        let rowElem = tableElem.querySelector('tbody').insertRow(-1); // -1 inserts at end
-
-        // Iterate over each premise, and replace its value in the code literal for this iterations combo.
+        // Iterate over each premise, and replace its value in each code literal for this iterations combo.
         for( let j = 0; j < premiseOrder.length; j++ ) {
-            rowCode = rowCode.replaceAll(new RegExp(`\\b(${premiseOrder[j]})\\b`, 'gi'), premiseCartesian[i][j]);
-
-            // Add cell to our row for this premise with it's combination
-            rowElem.insertCell(-1).innerText = premiseCartesian[i][j] ? 'T' : 'F';
+            rowCodes = rowCodes.map(rowCode => rowCode.replaceAll(new RegExp(`\\b(${premiseOrder[j]})\\b`, 'gi'), premiseCartesian[i][j]))
         }
 
-        // Attempt to evaluate the javascript code literal for this combo
-        try {
-            rowElem.insertCell(-1).innerHTML = eval(rowCode) ? '<strong>T</strong>' : 'F';
-            errorElem.style.display = 'none';
-        } catch (err) {
-            console.log({err});
-            errorElem.style.display = 'block';
-            errorElem.innerHTML = `Malformed propositional logic;
-                <pre class="mt-2">(${code}) => (${rowCode})<br>${err.message}</pre>Try using parentheses to specify order of precedence.`;
-        }
+        // Iterate over each row code and eval it, and add to this row in the cartesian
+        rowCodes.forEach(rowCode => {
+
+            try {
+                premiseCartesian[i].push(eval(rowCode));
+            } catch (err) {
+                err.rowCode = rowCode;
+                throw err;
+            }
+        });
     }
 
-    performanceTextElem.innerText = 'Truth table generated in ' + (performance.now() - performanceStart).toFixed(2) + ' ms.'
+    return [ [ ...premiseOrder, ...logics ], ...premiseCartesian ];
+}
+
+// Gets triggered when the main HTML input element is changed
+function onInputChange( value ) {
+    let performanceStart = performance.now();
+
+    try {
+        errorElem.style.display = 'none';
+
+        let truthTable = calculateTruthTable(value);
+
+        console.log(truthTable);
+
+        // Generate table headers
+        tableElem.querySelector('thead > tr').innerHTML = 
+            truthTable[0].map(p => `<th>${prettyPrint(p)}</th>`).join('');
+    
+        // Clear tbody
+        tableElem.querySelector('tbody').innerHTML = null;
+    
+        // Loop over each possible combination
+        for( let i = 1; i < truthTable.length; i++ ) {
+    
+            // Generate tr elem for this row
+            let rowElem = tableElem.querySelector('tbody').insertRow(-1); // -1 inserts at end
+    
+            // Iterate over each premise, and replace its value in the code literal for this iterations combo.
+            for( let j = 0; j < truthTable[i].length; j++ ) {
+    
+                // Add cell to our row for this premise with it's combination or conclusion
+                rowElem.insertCell(-1).innerHTML = truthTable[i][j] ? 
+                    '<strong class="h5"><code class="text-primary">T</code></strong>' : 
+                    '<strong class="h5"><code>F</code></strong>';
+            }
+        }
+    
+        performanceTextElem.innerText = 'Truth table generated in ' + (performance.now() - performanceStart).toFixed(2) + ' ms.'
+    
+    } catch (err) {
+        errorElem.style.display = 'block';
+        errorElem.innerHTML = `Malformed propositional logic;
+            <pre class="mt-2">(${value}) => (${err.rowCode})<br>${err.message}</pre>Try using parentheses to specify order of precedence.`;
+    }
 }
 
 // Changes JavaScript code literal into propositional syntax, e.g
@@ -104,7 +132,7 @@ function parse(logic) {
      * thus, we use this RegExp and its capture groups alter the expression written to the form of !p or q.
      */
     logic = logic.replaceAll(regularExpressions.thenWrap, (whole, p1, p2) => {
-        return '!(' + p1 + ') || (' + p2 + ')';
+        return '!(' + p1.trim() + ') || (' + p2.trim() + ')';
     } )
 
     // Parse paranthesis
