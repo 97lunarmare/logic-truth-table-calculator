@@ -159,9 +159,9 @@ function replaceParanthesis(string, callback) {
 /**
  * Finds the cartesian product of multiple matrices
  * 
- * This is probably a really bad and inefficient way of finding the cartesian product and obviously this is overboard for simply finding the combos of
- * multiple true/false combos but it is an interesting way of solving this problem and was fun to figure out. 
- * This function should work for any matrices, not just [true, false]
+ * I originally thought this method would be quite slow so I did make a function that procedurally generates a row's combination
+ * instead of stepping through from start to finish. Turns out the generation method takes approx. 2ms longer! So we're staying
+ * with this function, which despite its loops is actually faster than I thought.
  */
 function cartesianProduct( params )
 {

@@ -20,7 +20,7 @@ Please feel free to contribute to this repository as there are many things that 
 
 ### To-do
 - Abstract the truth-table generation code from the table rendering code (currently they are tightly coupled)
-- Address the parentheses issue, where order of precedence of `p then q then r` cannot be inferred without the use of brackets.
+- ~~Address the parentheses issue, where order of precedence of `p then q then r` cannot be inferred without the use of brackets.~~
 - Show intermediate truths. For example, `(p and q) then (r and s)` could show the intermediate truths of `p and q` and `r and s` before showing the final truth.
 - Functionality to export the truth table as `.csv` and similar formats.
 - Functionality to compare two expressions to prove
