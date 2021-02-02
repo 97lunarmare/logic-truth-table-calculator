@@ -11,8 +11,9 @@ const errorElem = document.getElementById('logic-error');
 const regularExpressions = {
     'and': /(?<= |^)(and|[&]|\/\\|\^)+(?= |$)/g,    // and = &&
     'or': /(?<= |^)(or|[\|]|\\\/|v|V)+(?= |$)/g,    // or = ||
-    'not': /(?<= |^|\(|\))(not |not|!|¬)+/g,              // not = !
-    'then': /(.[^-]+?)(?:then|(?<!<)-+>)(.+)/g,     // p then q = !p || q
+    'not': /(?<= |^|\(|\))(not |not|!|¬)+/g,        // not = !
+    'thenWrap': /(.[^-]+?)(?:then|(?<!<)-+>)(.+)/g,     // p then q = !p || q
+    'then': /(then|(?<!<)-+>)/g,                    // then, but without capturing left or right side
     'equals': /(?<= |^)(<-+>)+(?= |$)/g,            // <-> = ==
     'xor': /(?<= |^)(\(\+\)|xor)+(?= |$)/g,         // (+) = ^ (bit-wise XOR)
     'premises': /[^\W\s]+/g,                        // Identifies any words, i.e our premises/variables, p, q, ...n
@@ -73,9 +74,7 @@ function prettyPrint(string) {
         .replaceAll(regularExpressions.and, '&and;')
         .replaceAll(regularExpressions.or, '&or;')
         .replaceAll(regularExpressions.not, '&sim;')
-        .replaceAll(regularExpressions.then, (whole, p1, p2) => {
-            return p1 + ' &rarr; ' + p2;
-        })
+        .replaceAll(regularExpressions.then, '&rarr;')
         .replaceAll(regularExpressions.xor, '&oplus;')
         .replaceAll(regularExpressions.equals, '&equiv;')
         .replaceAll('(', '&lpar;')
@@ -84,6 +83,21 @@ function prettyPrint(string) {
 
 // Transforms a piece of propositional logic into javascript code literal
 function parse(logic) {
+
+    // Then
+    /**
+     * This RegExp has two capture groups. 
+     * #1 is capturing the expression on the left-hand side of the 'then' and #2 is the right-hand side.
+     * 
+     * p1 = group #1
+     * p2 = group #2
+     * 
+     * In JavaScript we have no SIMPLE way of evaluating p -> q, however, we know that p -> q is logically equivalent to !p or q, 
+     * thus, we use this RegExp and its capture groups alter the expression written to the form of !p or q.
+     */
+    logic = logic.replaceAll(regularExpressions.thenWrap, (whole, p1, p2) => {
+        return '!(' + p1 + ') || (' + p2 + ')';
+    } )
 
     // Parse paranthesis
     logic = replaceParanthesis(logic, parse);
@@ -95,20 +109,6 @@ function parse(logic) {
         .replaceAll(regularExpressions.and, '&&')
         // Or
         .replaceAll(regularExpressions.or, '||')
-        // Then
-        /**
-         * This RegExp has two capture groups. 
-         * #1 is capturing the expression on the left-hand side of the 'then' and #2 is the right-hand side.
-         * 
-         * p1 = group #1
-         * p2 = group #2
-         * 
-         * In JavaScript we have no SIMPLE way of evaluating p -> q, however, we know that p -> q is logically equivalent to !p or q, 
-         * thus, we use this RegExp and its capture groups alter the expression written to the form of !p or q.
-         */
-        .replaceAll(regularExpressions.then, (whole, p1, p2) => {
-            return '!' + p1 + ' || ' + p2;
-        })
         // Equals
         .replaceAll(regularExpressions.equals, '==')
         // Xor
